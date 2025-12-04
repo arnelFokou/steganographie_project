@@ -7,6 +7,7 @@ image = Image.open("image_lion_king.jpg")
 def get_pixel_image(image,pos_x,pos_y):
     return image.getpixel((pos_x,pos_y))
 
+# take a number and convert it to octet 
 def decimal_to_binary(number):
     binary_number =""
     while number > 0:
@@ -17,15 +18,29 @@ def decimal_to_binary(number):
     return binary_number[::-1]
 
 
-
 def text_to_binary(message):
-
     # convert each character to its ordinal value
     message_ordinal = [ ord(character) for character in message]
     # convert each ordinal value to its binary representation
     message_bits = [decimal_to_binary(number) for number in message_ordinal]
-    print(message_bits)
     return "".join(message_bits)
 
-print(text_to_binary("Helloa1#()"))
+def pair_pixel(image):
+    liste_pixel_pairs = []
+    for pixel in image.getdata():
+        pixel_value = 0
+        significant_composant = 65_536
+        for composant in pixel:
+            pixel_value += composant * significant_composant
+            significant_composant /= 256
+        liste_pixel_pairs.append(int(pixel_value) if pixel_value % 2 == 0 else int(pixel_value -1))
+    
+    return liste_pixel_pairs
+
+
+    liste_pixels = [_ for pixel in image.getdata() ]
+print(pair_pixel(image))
+print(len(pair_pixel(image)))
+
+
 
