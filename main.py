@@ -37,6 +37,14 @@ def pair_pixel(image):
     
     return liste_pixel_pairs
 
+def encode_message_in_image(image,message):
+    value_pixels = pair_pixel(image)
+    message_bits = text_to_binary(message)
+    final_pixels =[]
+
+    for bit_pos,bit_value in enumerate(message_bits):
+        final_pixels.append(value_pixels[bit_pos] + bit_value)
+    return final_pixels
 
     liste_pixels = [_ for pixel in image.getdata() ]
 print(pair_pixel(image))
