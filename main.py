@@ -28,23 +28,17 @@ def binary_to_message(binary_message):
 def even_pixel_image(matrice_image):
     return matrice_image - matrice_image % 2
 
-def insert_image_in_pictue(image,message):
-    image =  even_pixel_image(np.array(image))
-    print(image.shape)
-    row_number, col_number, canal_number = image.shape
+def insert_message_in_pictue(image,message):
+    image_matrix =  even_pixel_image(np.array(image))
+    row_number, col_number, canal_number = image_matrix.shape
     message_crypted = message_to_binary(message)
 
-    idx_message=0
-    for row in range(0,row_number):
-        for col in range(0,col_number):
-            for canal in range(0,canal_number):
-                if idx_message == len(message_crypted):
-                    break
-                else:
-                    image[row,col,canal] += int(message_crypted[idx_message])
-                    idx_message +=1
 
-    Image.fromarray(image).save("image_watermarked.png")
+    image_flatten = image_matrix.flatten()
+    liste_pixels = [(value + int(message_crypted[pos] if pos < len(message_crypted) else 0)) for pos, value in enumerate(image_flatten) ]
+    matrix_messaged = np.array(liste_pixels).reshape(row_number,col_number,canal_number)
+
+    Image.fromarray(matrix_messaged).save("image_watermarked.png")
 
 def retrieve_message_from_picture(image):
     
@@ -56,16 +50,8 @@ def retrieve_message_from_picture(image):
     print(message_final)
 
 
-
-
-
-
-
-message = "Hello,Maman est fatiguée : pourquoi les parents râlent - stress, épuisement et moyens de retrouver la sérénité dans le quotidien familial"
-# message_binary = message_to_binary(message)
-# print(binary_to_message(message_binary))
-
+message = "Bravo, tu as réussi à extraire ce texte !"
 image = Image.open("lion_king.png").convert('RGB')
-insert_image_in_pictue(image,message)
+insert_message_in_pictue(image,message)
 image_watermarked = Image.open("image_watermarked.png")
 retrieve_message_from_picture(image_watermarked)
