@@ -19,9 +19,8 @@ def message_to_binary(message):
 def binary_to_message(binary_message):
 
     message=[]
-    print(len(message))
-    for bit_elt in range(0, len(binary_message)-1, 21):
-        char_value = chr(int(binary_message[bit_elt:bit_elt+21],2))
+    for start_idx in range(0, len(binary_message)-1, 21):
+        char_value = chr(int(binary_message[start_idx:start_idx+21],2))
         message.append(char_value)
     return "".join(message)
 
@@ -29,14 +28,24 @@ def even_pixel_image(matrice_image):
     return matrice_image - matrice_image % 2
 
 def insert_message_in_pictue(image,message):
-    image_matrix =  even_pixel_image(np.array(image))
-    row_number, col_number, canal_number = image_matrix.shape
+    even_matrix =  even_pixel_image(np.array(image))
+    row_number, col_number, canal_number = even_matrix.shape
     message_crypted = message_to_binary(message)
+    length_message = len(message_crypted)
+    
+    image_octets = even_matrix.flatten()
+    liste_octets_crypted=[]
 
-
-    image_flatten = image_matrix.flatten()
-    liste_pixels = [(value + int(message_crypted[pos] if pos < len(message_crypted) else 0)) for pos, value in enumerate(image_flatten) ]
-    matrix_messaged = np.array(liste_pixels).reshape(row_number,col_number,canal_number)
+    for pos, value in enumerate(image_octets):
+        if pos < length_message:
+            liste_octets_crypted.append(value + int(message_crypted[pos]))
+        else:
+            break
+                         
+    if pos == length_message:
+        liste_octets_crypted.extend(image_octets[pos:]) 
+    print(len(liste_octets_crypted),len(image_octets))
+    matrix_messaged = np.array(liste_octets_crypted).reshape(row_number,col_number,canal_number)
 
     Image.fromarray(matrix_messaged).save("image_watermarked.png")
 
